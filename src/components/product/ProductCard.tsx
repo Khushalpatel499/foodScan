@@ -8,6 +8,7 @@ import { Button } from '../ui/Button';
 import { NutritionGrid } from './NutritionGrid';
 import { AlternativesSection } from './AlternativesSection';
 import { IngredientsExplainer } from './IngredientsExplainer';
+import { ShareButton } from './ShareButton';
 import { useEffect } from 'react';
 
 interface ProductCardProps {
@@ -102,6 +103,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
       {/* Actions */}
       <div className="flex gap-3 pt-2">
+        <ShareButton product={product} healthScore={healthScore} />
         <Button variant="secondary" size="sm" onClick={() => speak(
           `${product.name} by ${product.brand}. Health score: ${healthScore.score} out of 100. ${healthScore.label}.`
         )}>
