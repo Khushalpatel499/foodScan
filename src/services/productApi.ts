@@ -23,11 +23,19 @@ function mapToProduct(barcode: string, data: OpenFoodFactsResponse): Product {
   const p = data.product;
   const n = p.nutriments || {};
 
+  // Collect all available images
+  const images: { url: string; label: string }[] = [];
+  if (p.image_front_url) images.push({ url: p.image_front_url, label: 'Front' });
+  if (p.image_ingredients_url) images.push({ url: p.image_ingredients_url, label: 'Ingredients' });
+  if (p.image_nutrition_url) images.push({ url: p.image_nutrition_url, label: 'Nutrition' });
+  if (images.length === 0 && p.image_url) images.push({ url: p.image_url, label: 'Product' });
+
   return {
     barcode,
     name: p.product_name || 'Unknown Product',
     brand: p.brands || 'Unknown Brand',
-    image: p.image_url || '',
+    image: p.image_url || p.image_front_url || '',
+    images,
     ingredients: p.ingredients_text || 'No ingredients listed',
     allergens: (p.allergens_tags || []).map(a => a.replace('en:', '')),
     nutriments: {

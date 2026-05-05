@@ -4,12 +4,18 @@ export interface Product {
   name: string;
   brand: string;
   image: string;
+  images: ProductImage[];
   ingredients: string;
   allergens: string[];
   nutriments: Nutriments;
   nutriScore: string;
   categories: string;
   quantity: string;
+}
+
+export interface ProductImage {
+  url: string;
+  label: string;
 }
 
 export interface Nutriments {
@@ -43,6 +49,9 @@ export interface OpenFoodFactsResponse {
     product_name?: string;
     brands?: string;
     image_url?: string;
+    image_front_url?: string;
+    image_ingredients_url?: string;
+    image_nutrition_url?: string;
     ingredients_text?: string;
     allergens_tags?: string[];
     nutriments?: Record<string, number>;

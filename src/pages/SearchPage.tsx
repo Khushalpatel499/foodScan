@@ -3,23 +3,13 @@ import type { Product } from '../types';
 import { useProductSearch } from '../hooks/useProductSearch';
 import { calculateHealthScore } from '../utils/healthScore';
 import { ProductCard } from '../components/product/ProductCard';
-import { Button } from '../components/ui/Button';
+import { BottomSheet } from '../components/ui/BottomSheet';
 import { Skeleton } from '../components/ui/Skeleton';
+import { ImageWithSkeleton } from '../components/ui/ImageWithSkeleton';
 
 export function SearchPage() {
   const { query, setQuery, results, loading, clear } = useProductSearch();
   const [selected, setSelected] = useState<Product | null>(null);
-
-  if (selected) {
-    return (
-      <div className="space-y-4">
-        <Button variant="ghost" onClick={() => setSelected(null)} className="gap-1">
-          ← Back to Search
-        </Button>
-        <ProductCard product={selected} />
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-5">
@@ -76,6 +66,11 @@ export function SearchPage() {
           ))}
         </div>
       )}
+
+      {/* Bottom Sheet with product details */}
+      <BottomSheet open={!!selected} onClose={() => setSelected(null)} title={selected?.name}>
+        {selected && <ProductCard product={selected} />}
+      </BottomSheet>
     </div>
   );
 }
@@ -93,13 +88,11 @@ function SearchResultCard({ product, onSelect }: { product: Product; onSelect: (
       onClick={() => onSelect(product)}
       className="flex flex-col rounded-xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-800/50 overflow-hidden text-left hover:shadow-md transition-shadow animate-fade-in"
     >
-      <div className="h-28 bg-gray-50 dark:bg-gray-800 flex items-center justify-center p-3">
-        {product.image ? (
-          <img src={product.image} alt="" className="h-full object-contain" loading="lazy" />
-        ) : (
-          <span className="text-3xl">🍽️</span>
-        )}
-      </div>
+      <ImageWithSkeleton
+        src={product.image}
+        alt={product.name}
+        className="h-28 bg-gray-50 dark:bg-gray-800 p-3"
+      />
       <div className="p-2.5 space-y-1.5 flex-1">
         <p className="text-xs font-medium text-gray-900 dark:text-white line-clamp-2 leading-tight">{product.name}</p>
         <p className="text-[10px] text-gray-500 dark:text-gray-400 truncate">{product.brand}</p>

@@ -1,5 +1,6 @@
-import { NavLink } from 'react-router-dom';
-import type { ReactNode } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
+import { type ReactNode } from 'react';
+import { PageTransition } from '../ui/PageTransition';
 
 interface LayoutProps {
   children: ReactNode;
@@ -15,11 +16,15 @@ const navItems = [
 ];
 
 export function Layout({ children }: LayoutProps) {
+  const location = useLocation();
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 pb-20">
-      {/* Main content */}
+      {/* Main content with page transition */}
       <main className="max-w-lg mx-auto px-4 pt-6">
-        {children}
+        <PageTransition key={location.pathname}>
+          {children}
+        </PageTransition>
       </main>
 
       {/* Bottom navigation */}
