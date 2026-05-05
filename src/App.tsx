@@ -1,7 +1,9 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { useEffect, lazy, Suspense } from 'react';
+import { useEffect, lazy, Suspense, useState } from 'react';
 import { Layout } from './components/layout/Layout';
+import { Onboarding } from './components/ui/Onboarding';
 import { useAppStore } from './stores/appStore';
+import { hasCompletedOnboarding } from './utils/onboarding';
 
 // Lazy load pages for code splitting
 const ScanPage = lazy(() => import('./pages/ScanPage').then(m => ({ default: m.ScanPage })));
@@ -13,11 +15,15 @@ const SettingsPage = lazy(() => import('./pages/SettingsPage').then(m => ({ defa
 
 export default function App() {
   const darkMode = useAppStore(s => s.darkMode);
+  const [showOnboarding, setShowOnboarding] = useState(!hasCompletedOnboarding());
 
-  // Apply dark mode class on mount
   useEffect(() => {
     document.documentElement.classList.toggle('dark', darkMode);
   }, [darkMode]);
+
+  if (showOnboarding) {
+    return <Onboarding onComplete={() => setShowOnboarding(false)} />;
+  }
 
   return (
     <BrowserRouter>

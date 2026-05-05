@@ -1,15 +1,17 @@
 import type { Product } from '../../types';
 import { calculateHealthScore, formatAllergens } from '../../utils/healthScore';
 import { speak } from '../../utils/voice';
+import { hapticSuccess } from '../../utils/haptics';
 import { useAppStore } from '../../stores/appStore';
 import { useAlternatives } from '../../hooks/useAlternatives';
 import { ScoreBadge } from '../ui/ScoreBadge';
 import { Button } from '../ui/Button';
+import { Confetti } from '../ui/Confetti';
 import { NutritionGrid } from './NutritionGrid';
 import { AlternativesSection } from './AlternativesSection';
 import { IngredientsExplainer } from './IngredientsExplainer';
 import { ShareButton } from './ShareButton';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 interface ProductCardProps {
   product: Product;
@@ -21,19 +23,26 @@ export function ProductCard({ product }: ProductCardProps) {
   const allergens = formatAllergens(product.allergens);
   const favorite = isFavorite(product.barcode);
   const altData = useAlternatives(product, healthScore.score < 70);
+  const [showConfetti, setShowConfetti] = useState(false);
 
-  // Voice feedback on load
+  // Voice feedback + haptic + confetti on load
   useEffect(() => {
+    hapticSuccess();
+    if (healthScore.score >= 90) {
+      setShowConfetti(true);
+      setTimeout(() => setShowConfetti(false), 3000);
+    }
     const msg = healthScore.label === 'Healthy'
       ? `${product.name} is a healthy choice`
       : healthScore.label === 'Avoid'
         ? `${product.name} is unhealthy. Consider alternatives.`
         : `${product.name} has moderate nutritional value`;
     speak(msg);
-  }, [product.name, healthScore.label]);
+  }, [product.name, healthScore.label, healthScore.score]);
 
   return (
     <div className="animate-fade-in space-y-4">
+      <Confetti active={showConfetti} />
       {/* Header with image */}
       <div className="relative rounded-2xl overflow-hidden bg-gray-100 dark:bg-gray-800">
         {product.image ? (
