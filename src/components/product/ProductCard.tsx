@@ -2,9 +2,11 @@ import type { Product } from '../../types';
 import { calculateHealthScore, formatAllergens } from '../../utils/healthScore';
 import { speak } from '../../utils/voice';
 import { useAppStore } from '../../stores/appStore';
+import { useAlternatives } from '../../hooks/useAlternatives';
 import { ScoreBadge } from '../ui/ScoreBadge';
 import { Button } from '../ui/Button';
 import { NutritionGrid } from './NutritionGrid';
+import { AlternativesSection } from './AlternativesSection';
 import { useEffect } from 'react';
 
 interface ProductCardProps {
@@ -16,6 +18,7 @@ export function ProductCard({ product }: ProductCardProps) {
   const healthScore = calculateHealthScore(product.nutriments);
   const allergens = formatAllergens(product.allergens);
   const favorite = isFavorite(product.barcode);
+  const altData = useAlternatives(product, healthScore.score < 70);
 
   // Voice feedback on load
   useEffect(() => {
@@ -95,6 +98,9 @@ export function ProductCard({ product }: ProductCardProps) {
           <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{product.ingredients}</p>
         </div>
       )}
+
+      {/* Healthier Alternatives - only show when score is not great */}
+      <AlternativesSection alternatives={altData.alternatives} loading={altData.loading} />
 
       {/* Actions */}
       <div className="flex gap-3 pt-2">

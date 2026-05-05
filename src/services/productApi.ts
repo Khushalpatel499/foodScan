@@ -65,3 +65,30 @@ export async function searchProducts(query: string, limit = 5): Promise<Product[
       )
     );
 }
+
+/**
+ * Fetches healthier alternatives from the same category.
+ * Filters out the original product and returns only those with better nutri-scores.
+ */
+export async function fetchAlternatives(product: Product, limit = 6): Promise<Product[]> {
+  // Extract first meaningful category
+  const category = product.categories.split(',')[0]?.trim();
+  if (!category) return [];
+
+  const response = await fetch(
+    `${BASE_URL}/search?categories_tags_en=${encodeURIComponent(category)}&sort_by=nutriscore_score&page_size=${limit + 5}&json=true`
+  );
+
+  if (!response.ok) return [];
+
+  const data = await response.json();
+  return (data.products || [])
+    .filter((p: Record<string, unknown>) => p.product_name && p.code !== product.barcode)
+    .slice(0, limit)
+    .map((p: Record<string, unknown>) =>
+      mapToProduct(
+        (p.code as string) || '',
+        { status: 1, product: p as OpenFoodFactsResponse['product'] }
+      )
+    );
+}
