@@ -1,5 +1,6 @@
 import { useAppStore } from '../stores/appStore';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from '../hooks/useTranslation';
 import { calculateHealthScore } from '../utils/healthScore';
 import { Button } from '../components/ui/Button';
 import { SwipeableRow } from '../components/ui/SwipeableRow';
@@ -8,21 +9,22 @@ import type { Product } from '../types';
 export function FavoritesPage() {
   const { favorites } = useAppStore();
   const navigate = useNavigate();
+  const t = useTranslation();
 
   if (favorites.length === 0) {
     return (
       <div className="text-center py-16 space-y-3">
         <p className="text-4xl">❤️</p>
-        <p className="text-gray-500 dark:text-gray-400">No favorites yet</p>
-        <Button variant="secondary" onClick={() => navigate('/')}>Start Scanning</Button>
+        <p className="text-gray-500 dark:text-gray-400">{t.noFavorites}</p>
+        <Button variant="secondary" onClick={() => navigate('/')}>{t.startScanning}</Button>
       </div>
     );
   }
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-bold text-gray-900 dark:text-white">Favorites</h1>
-      <p className="text-[10px] text-gray-400 dark:text-gray-500">← Swipe left to remove</p>
+      <h1 className="text-xl font-bold text-gray-900 dark:text-white">{t.favoritesTitle}</h1>
+      <p className="text-[10px] text-gray-400 dark:text-gray-500">{t.swipeToRemove}</p>
       <div className="space-y-2">
         {favorites.map(product => (
           <FavoriteItem key={product.barcode} product={product} />

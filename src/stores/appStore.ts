@@ -1,10 +1,12 @@
 import { create } from 'zustand';
 import type { Product, HistoryEntry } from '../types';
+import type { Locale } from '../utils/i18n';
 import { getItem, setItem } from '../services/storage';
 
 const HISTORY_KEY = 'foodscan_history';
 const FAVORITES_KEY = 'foodscan_favorites';
 const DARK_MODE_KEY = 'foodscan_dark';
+const LOCALE_KEY = 'foodscan_locale';
 
 interface AppState {
   // History
@@ -20,6 +22,10 @@ interface AppState {
   // Theme
   darkMode: boolean;
   toggleDarkMode: () => void;
+
+  // Language
+  locale: Locale;
+  setLocale: (locale: Locale) => void;
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
@@ -57,5 +63,12 @@ export const useAppStore = create<AppState>((set, get) => ({
     set({ darkMode: next });
     setItem(DARK_MODE_KEY, next);
     document.documentElement.classList.toggle('dark', next);
+  },
+
+  locale: getItem<Locale>(LOCALE_KEY, 'en'),
+
+  setLocale: (locale) => {
+    set({ locale });
+    setItem(LOCALE_KEY, locale);
   },
 }));
