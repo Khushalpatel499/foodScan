@@ -7,6 +7,7 @@ import { ScoreBadge } from '../ui/ScoreBadge';
 import { Button } from '../ui/Button';
 import { NutritionGrid } from './NutritionGrid';
 import { AlternativesSection } from './AlternativesSection';
+import { IngredientsExplainer } from './IngredientsExplainer';
 import { useEffect } from 'react';
 
 interface ProductCardProps {
@@ -91,12 +92,9 @@ export function ProductCard({ product }: ProductCardProps) {
       {/* Nutrition */}
       <NutritionGrid nutriments={product.nutriments} />
 
-      {/* Ingredients */}
+      {/* Ingredients Explainer */}
       {product.ingredients && product.ingredients !== 'No ingredients listed' && (
-        <div>
-          <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Ingredients</h3>
-          <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{product.ingredients}</p>
-        </div>
+        <IngredientsExplainer ingredientsText={product.ingredients} />
       )}
 
       {/* Healthier Alternatives - only show when score is not great */}
